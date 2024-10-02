@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Hollow Knight Checklist</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <style>
+        body {
+            background-color: #9900f9;
+            font-family: Arial, sans-serif;
+            color: white;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .checklist {
+            max-width: 600px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+        h2 {
+            margin-top: 20px;
+            border-bottom: 2px solid white;
+            padding-bottom: 5px;
+        }
+        label {
+            display: block;
+            margin: 10px 0;
+        }
+        input[type="checkbox"] {
+            margin-right: 10px;
+        }
+        #certificate {
+            margin-top: 20px;
+            text-align: center;
+        }
+        canvas {
+            border: 2px solid white;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+    <main>
+        <h1>Hollow Knight Checklist</h1>
+        <div class="checklist">
+            <h2>Obtaining Mobility Upgrades</h2>
+            <label><input type="checkbox" id="mothwing-cloak" /> Mothwing Cloak</label>
+            <label><input type="checkbox" id="mantis-claw" /> Mantis Claw</label>
+            <label><input type="checkbox" id="crystal-heart" /> Crystal Heart</label>
+            <label><input type="checkbox" id="ismas-tear" /> Isma's Tear</label>
+            <label><input type="checkbox" id="monarch-wings" /> Monarch Wings</label>
+
+            <h2>Shade Spell Upgrades</h2>
+            <label><input type="checkbox" id="shade-cloak" /> Shade Cloak</label>
+            <label><input type="checkbox" id="descending-dark" /> Descending Dark</label>
+            <label><input type="checkbox" id="shade-soul" /> Shade Soul</label>
+            <label><input type="checkbox" id="abyss-shriek" /> Abyss Shriek</label>
+
+            <h2>Bosses</h2>
+            <label><input type="checkbox" id="defeat-false-knight" /> Defeat False Knight</label>
+            <label><input type="checkbox" id="defeat-hornet-1" /> Defeat Hornet (Protector)</label>
+            <label><input type="checkbox" id="defeat-mantis-lords" /> Defeat Mantis Lords</label>
+            <label><input type="checkbox" id="defeat-dung-defender" /> Defeat Dung Defender</label>
+            <label><input type="checkbox" id="defeat-hornet-2" /> Defeat Hornet (Sentinel)</label>
+            <label><input type="checkbox" id="defeat-collector" /> Defeat Collector</label>
+            <label><input type="checkbox" id="defeat-nosk" /> Defeat Nosk</label>
+            <label><input type="checkbox" id="defeat-soul-master" /> Defeat Soul Master</label>
+            <label><input type="checkbox" id="defeat-nerfs" /> Defeat The Traitor Lord</label>
+            <label><input type="checkbox" id="defeat-grimm" /> Defeat Grimm</label>
+            <label><input type="checkbox" id="defeat-hollow-knight" /> Defeat the Hollow Knight</label>
+
+            <h2>Warrior Dreams</h2>
+            <label><input type="checkbox" id="defeat-gorb" /> Defeat Gorb</label>
+            <label><input type="checkbox" id="defeat-xeno" /> Defeat Xeno</label>
+            <label><input type="checkbox" id="defeat-elder-hu" /> Defeat Elder Hu</label>
+            <label><input type="checkbox" id="defeat-no-eyes" /> Defeat No Eyes</label>
+
+            <h2>Dream Bosses</h2>
+            <label><input type="checkbox" id="defeat-soul-tyrant" /> Defeat Soul Tyrant</label>
+            <label><input type="checkbox" id="defeat-lost-kin" /> Defeat Lost Kin</label>
+            <label><input type="checkbox" id="defeat-failed-champion" /> Defeat Failed Champion</label>
+
+            <button id="generate-certificate">Generate Certificate</button>
+        </div>
+
+        <div id="certificate">
+            <canvas id="certificateCanvas" width="600" height="400" style="display:none;"></canvas>
+        </div>
+    </main>
+    <script>
+        const generateCertificateButton = document.getElementById('generate-certificate');
+        const certificateCanvas = document.getElementById('certificateCanvas');
+        const ctx = certificateCanvas.getContext('2d');
+
+        // Load checklist state from local storage
+        function loadChecklist() {
+            const checklistState = JSON.parse(localStorage.getItem('hollowKnightChecklist')) || {};
+            const checkboxes = document.querySelectorAll('.checklist input[type="checkbox"]');
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = checklistState[checkbox.id] || false;
+            });
+        }
+
+        // Save checklist state to local storage
+        function saveChecklist() {
+            const checkboxes = document.querySelectorAll('.checklist input[type="checkbox"]');
+            const checklistState = {};
+            checkboxes.forEach(checkbox => {
+                checklistState[checkbox.id] = checkbox.checked;
+            });
+            localStorage.setItem('hollowKnightChecklist', JSON.stringify(checklistState));
+        }
+
+        // Function to generate the certificate
+        function generateCertificate() {
+            const checkboxes = document.querySelectorAll('.checklist input[type="checkbox"]');
+            const totalGoals = checkboxes.length;
+            const completedGoals = Array.from(checkboxes).filter(checkbox => checkbox.checked).length;
+            const completionPercentage = Math.round((completedGoals / totalGoals) * 100);
+
+            // Clear the canvas
+            ctx.clearRect(0, 0, certificateCanvas.width, certificateCanvas.height);
+
+            // Draw the background
+            ctx.fillStyle = "#9900f9"; // same as body background
+            ctx.fillRect(0, 0, certificateCanvas.width, certificateCanvas.height);
+
+            // Add text to the canvas
+            ctx.fillStyle = "white";
+            ctx.font = "30px Arial";
+            ctx.textAlign = "center";
+            ctx.fillText("Hollow Knight Completion Certificate", certificateCanvas.width / 2, 100);
+            ctx.font = "24px Arial";
+            ctx.fillText(`You have completed ${completionPercentage}% of Hollow Knight!`, certificateCanvas.width / 2, 200);
+
+            // Display the canvas
+            certificateCanvas.style.display = 'block';
+        }
+
+        // Load checklist on page load
+        loadChecklist();
+
+        // Add event listeners
+        document.querySelectorAll('.checklist input[type="checkbox"]').forEach(checkbox => {
+            checkbox.addEventListener('change', saveChecklist);
+        });
+        generateCertificateButton.addEventListener('click', generateCertificate);
+    </script>
+</body>
+</html>
